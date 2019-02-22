@@ -1,0 +1,10 @@
+\.*
+!.gitignore
+
+build
+out
+target
+
+utils/keystores
+
+*.iml
