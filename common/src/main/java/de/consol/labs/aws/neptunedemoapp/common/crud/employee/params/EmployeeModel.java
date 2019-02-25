@@ -51,4 +51,14 @@ public class EmployeeModel {
         this.position = position;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "EmployeeModel{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", position='" + position + '\'' +
+                '}';
+    }
 }
