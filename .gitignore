@@ -8,3 +8,5 @@ target
 utils/keystores
 
 *.iml
+
+cloudformation/vars.sh
