@@ -1,7 +1,6 @@
 package de.consol.labs.aws.neptunedemoapp.common.facade;
 
 import de.consol.labs.aws.neptunedemoapp.common.crud.Label;
-import de.consol.labs.aws.neptunedemoapp.common.crud.PropertyGraphUtils;
 import de.consol.labs.aws.neptunedemoapp.common.crud.absence.AbsenceCrudController;
 import de.consol.labs.aws.neptunedemoapp.common.crud.absence.params.AbsenceVertex;
 import de.consol.labs.aws.neptunedemoapp.common.crud.certificate.CertificateCrudController;
@@ -29,6 +28,8 @@ import de.consol.labs.aws.neptunedemoapp.common.crud.skill.params.SkillVertex;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Edge;
+
+import java.util.Map;
 
 public class GraphFacade {
 
@@ -61,13 +62,13 @@ public class GraphFacade {
 
     public Employee2CertificateEdge linkEmployee2Certificate(final GraphTraversalSource g, final EmployeeVertex src, final CertificateVertex dest, final Employee2CertificateEdgeProperties properties) {
         final GraphTraversal<Edge, Edge> traversal = g.addE(Label.Edge.EMPLOYEE_2_CERTIFICATE).from(src.getVertex()).to(dest.getVertex());
-        final Edge edge = PropertyGraphUtils.setProperties(traversal, mapper.object2Properties(properties)).next();
+        final Edge edge = setEdgeProperties(traversal, mapper.object2Properties(properties)).next();
         return new Employee2CertificateEdge(edge);
     }
 
     public Employee2DegreeEdge linkEmployee2Degree(final GraphTraversalSource g, final EmployeeVertex src, final DegreeVertex dest, final Employee2DegreeEdgeProperties properties) {
         final GraphTraversal<Edge, Edge> traversal = g.addE(Label.Edge.EMPLOYEE_2_DEGREE).from(src.getVertex()).to(dest.getVertex());
-        final Edge edge = PropertyGraphUtils.setProperties(traversal, mapper.object2Properties(properties)).next();
+        final Edge edge = setEdgeProperties(traversal, mapper.object2Properties(properties)).next();
         return new Employee2DegreeEdge(edge);
     }
 
@@ -78,13 +79,13 @@ public class GraphFacade {
 
     public Employee2ProjectEdge linkEmployee2Project(final GraphTraversalSource g, final EmployeeVertex src, final ProjectVertex dest, final Employee2ProjectEdgeProperties properties) {
         final GraphTraversal<Edge, Edge> traversal = g.addE(Label.Edge.EMPLOYEE_2_PROJECT).from(src.getVertex()).to(dest.getVertex());
-        final Edge edge = PropertyGraphUtils.setProperties(traversal, mapper.object2Properties(properties)).next();
+        final Edge edge = setEdgeProperties(traversal, mapper.object2Properties(properties)).next();
         return new Employee2ProjectEdge(edge);
     }
 
     public Employee2SkillEdge linkEmployee2Skill(final GraphTraversalSource g, final EmployeeVertex src, final SkillVertex dest, final Employee2SkillEdgeProperties properties) {
         final GraphTraversal<Edge, Edge> traversal = g.addE(Label.Edge.EMPLOYEE_2_SKILL).from(src.getVertex()).to(dest.getVertex());
-        final Edge edge = PropertyGraphUtils.setProperties(traversal, mapper.object2Properties(properties)).next();
+        final Edge edge = setEdgeProperties(traversal, mapper.object2Properties(properties)).next();
         return new Employee2SkillEdge(edge);
     }
 
@@ -122,5 +123,12 @@ public class GraphFacade {
 
     public SkillCrudController getSkillCrudController() {
         return skillCrudController;
+    }
+
+    private static GraphTraversal<Edge, Edge> setEdgeProperties(GraphTraversal<Edge, Edge> traversal, final Map<String, Object> properties) {
+        for (final Map.Entry<String, Object> kv : properties.entrySet()) {
+            traversal = traversal.property(kv.getKey(), kv.getValue());
+        }
+        return traversal;
     }
 }

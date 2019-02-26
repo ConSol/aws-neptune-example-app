@@ -10,14 +10,17 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
+import static org.apache.tinkerpop.gremlin.structure.VertexProperty.Cardinality.single;
+
 public abstract class AbstractCrudController<CreateParamsType, CustomVertexType extends Vertex, ReadReturnType, IdParamType, UpdateParamsType> {
 
     private final Mapper mapper = new Mapper();
 
     public CustomVertexType create(final GraphTraversalSource g, final CreateParamsType params) {
         GraphTraversal<Vertex, Vertex> traversal = g.addV(getLabel());
-        traversal = PropertyGraphUtils.setProperties(traversal, getMapper().object2Properties(params));
-        return getVertexConverter().apply(traversal.next());
+        traversal = setVertexProperties(traversal, getMapper().object2Properties(params));
+        final Vertex v = traversal.next();
+        return getVertexConverter().apply(v);
     }
 
     public Optional<ReadReturnType> read(final GraphTraversalSource g, final IdParamType id, final Class<ReadReturnType> targetClass) {
@@ -30,8 +33,9 @@ public abstract class AbstractCrudController<CreateParamsType, CustomVertexType 
 
     public CustomVertexType update(final GraphTraversalSource g, final IdParamType id, final UpdateParamsType newProperties) {
         GraphTraversal<Vertex, Vertex> traversal = findBy(g, id);
-        traversal = PropertyGraphUtils.setProperties(traversal, getMapper().object2Properties(newProperties));
-        return getVertexConverter().apply(traversal.next());
+        traversal = setVertexProperties(traversal, getMapper().object2Properties(newProperties));
+        final Vertex v = traversal.next();
+        return getVertexConverter().apply(v);
     }
 
     public void delete(final GraphTraversalSource g, final IdParamType id) {
@@ -49,7 +53,11 @@ public abstract class AbstractCrudController<CreateParamsType, CustomVertexType 
     }
 
     protected GraphTraversal<Vertex, Vertex> findByProperties(final GraphTraversalSource g, final Map<String, Object> properties) {
-        return PropertyGraphUtils.hasProperties(g.V().hasLabel(getLabel()), properties);
+        GraphTraversal<Vertex, Vertex> t = g.V().hasLabel(getLabel());
+        for (final Map.Entry<String, Object> kv : properties.entrySet()) {
+            t = t.has(kv.getKey(), kv.getValue());
+        }
+        return t;
     }
 
     protected abstract String getLabel();
@@ -58,5 +66,12 @@ public abstract class AbstractCrudController<CreateParamsType, CustomVertexType 
 
     protected Mapper getMapper() {
         return mapper;
+    }
+
+    private static GraphTraversal<Vertex, Vertex> setVertexProperties(GraphTraversal<Vertex, Vertex> traversal, final Map<String, Object> properties) {
+        for (final Map.Entry<String, Object> kv : properties.entrySet()) {
+            traversal = traversal.property(single, kv.getKey(), kv.getValue());
+        }
+        return traversal;
     }
 }
