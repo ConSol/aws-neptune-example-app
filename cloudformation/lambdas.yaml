@@ -56,3 +56,43 @@ Resources:
     Tags:
       - Key: user
         Value: !Ref "TagUser"
+
+  RunAdHocQueryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: java8
+      Handler: de.consol.labs.aws.neptunedemoapp.runadhocquery.RunAdHocQueryHandler::handleRequest
+      Role: !Ref "RoleArn"
+      CodeUri: ../runadhocquery/target/runadhocquery-1.0-SNAPSHOT-aws-lambda-function.zip
+      Environment:
+        Variables:
+          NEPTUNE_ENDPOINT: !Ref "NeptuneEndpoint"
+          NEPTUNE_PORT: !Ref "NeptunePort"
+      Timeout: 180
+      MemorySize: 1024
+      VpcConfig:
+        SecurityGroupIds: !Ref "SecurityGroupIds"
+        SubnetIds: !Ref "SubnetIds"
+    Tags:
+      - Key: user
+        Value: !Ref "TagUser"
+
+  LoadTestDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: java8
+      Handler: de.consol.labs.aws.neptunedemoapp.loadtestdata.LoadTestDataHandler::handleRequest
+      Role: !Ref "RoleArn"
+      CodeUri: ../loadtestdata/target/loadtestdata-1.0-SNAPSHOT-aws-lambda-function.zip
+      Environment:
+        Variables:
+          NEPTUNE_ENDPOINT: !Ref "NeptuneEndpoint"
+          NEPTUNE_PORT: !Ref "NeptunePort"
+      Timeout: 180
+      MemorySize: 1024
+      VpcConfig:
+        SecurityGroupIds: !Ref "SecurityGroupIds"
+        SubnetIds: !Ref "SubnetIds"
+    Tags:
+      - Key: user
+        Value: !Ref "TagUser"

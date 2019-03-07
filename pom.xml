@@ -108,5 +108,7 @@
         <module>common</module>
         <module>createemployee</module>
         <module>reademployee</module>
+        <module>runadhocquery</module>
+        <module>loadtestdata</module>
     </modules>
 </project>
