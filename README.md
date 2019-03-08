@@ -53,10 +53,15 @@
 * go to the [AWS Lambda Functions](https://console.aws.amazon.com/lambda/home#/functions) and observe 2 AWS functions
 
 ### Loading test data
-Loading test data
+* go to the [AWS Lambda Functions](https://console.aws.amazon.com/lambda/home#/functions)
+* find the `LoadTestDataFunction` function and click on it
+* run test with any payload e.g. with the empty one: `{}`
+* the lambda should then load test data into Neptune
 
 ### Executing test query
-test ad hoc query 1:
+* go to the [AWS Lambda Functions](https://console.aws.amazon.com/lambda/home#/functions)
+* find the `RunAdHocQueryFunction` function and click on it
+* call lambda (via "Test") with the following payload:
 ```json
 {
   "skill1": "Java EE 8",
@@ -68,8 +73,7 @@ test ad hoc query 1:
   "availableTo": 1516665600000
 }
 ```
-
-result:
+* the response should be:
 ```json
 [
   {
@@ -88,8 +92,7 @@ result:
   }
 ]
 ```
-
-test ad hoc query 2:
+* call lambda with another payload:
 ```json
 {
   "skill1": "Java EE 8",
@@ -101,8 +104,7 @@ test ad hoc query 2:
   "availableTo": 1517443200000
 }
 ```
-
-result:
+* the response should be:
 ```json
 [
   {
